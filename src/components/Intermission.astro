@@ -1,0 +1,76 @@
+---
+import { INTRO, VIDEO } from '../data/habits';
+---
+<section class="intermission">
+  <div class="inter-inner container">
+    <p class="saying-label">A Japanese saying</p>
+    <p class="saying">{INTRO.saying}</p>
+    <p class="promise">
+      <strong>{INTRO.promise}</strong>
+    </p>
+    <a class="watch-intro" data-seek={0} href={VIDEO.url} target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+      Watch the intro
+      <span class="t">0:00</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .intermission {
+    padding: clamp(4rem, 10vh, 7rem) 0;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .inter-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 48rem;
+  }
+  .saying-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+    margin: 0;
+  }
+  .saying {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    line-height: 1.35;
+    color: var(--ink);
+    margin: 0;
+  }
+  .promise {
+    color: var(--ink-mute);
+    margin: 0.5rem 0 0 0;
+    max-width: 50ch;
+  }
+  .promise strong { color: var(--ink); font-weight: 500; }
+  .watch-intro {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(243,192,66,0.12);
+    border: 1px solid rgba(243,192,66,0.3);
+    color: var(--ink);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .watch-intro:hover { text-decoration: none; background: rgba(243,192,66,0.2); }
+  .watch-intro .t {
+    font-family: 'Fraunces', serif;
+    font-size: 0.78rem;
+    color: var(--ink-mute);
+    padding-left: 0.55rem;
+    border-left: 1px solid var(--line);
+    margin-left: 0.2rem;
+  }
+</style>

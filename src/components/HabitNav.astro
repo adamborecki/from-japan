@@ -1,0 +1,87 @@
+---
+import { HABITS } from '../data/habits';
+---
+<nav class="habit-nav" aria-label="Habits">
+  <div class="habit-nav-inner container">
+    <span class="nav-label">Eight habits</span>
+    <ol class="nav-list">
+      {HABITS.map((h) => (
+        <li>
+          <a href={`#${h.slug}`}>
+            <span class="n">{String(h.n).padStart(2, '0')}</span>
+            <span class="name">{h.name}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+</nav>
+
+<style>
+  .habit-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .habit-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .nav-label {
+    display: none;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x proximity;
+  }
+  .nav-list::-webkit-scrollbar { display: none; }
+  .nav-list li { scroll-snap-align: start; flex-shrink: 0; }
+  .nav-list a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    color: var(--ink-mute);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-list a:hover {
+    background: var(--bg-elev);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-list .n {
+    font-family: 'Fraunces', serif;
+    font-feature-settings: 'tnum' 1;
+    color: var(--yellow-hi);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+  .nav-list .name { font-family: 'Fraunces', serif; font-weight: 500; }
+
+  @media (min-width: 720px) {
+    .nav-label { display: inline; }
+  }
+</style>

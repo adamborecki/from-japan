@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import HabitNav from '../components/HabitNav.astro';
+import Intermission from '../components/Intermission.astro';
+import HabitSection from '../components/HabitSection.astro';
+import VideoPlayer from '../components/VideoPlayer.astro';
+import Outro from '../components/Outro.astro';
+import CreditFooter from '../components/CreditFooter.astro';
+import { HABITS } from '../data/habits';
+
+const ACCENTS = [
+  'var(--yellow)',
+  'var(--wood)',
+  'var(--sage)',
+  'var(--sky)',
+  'var(--rose)',
+  'var(--gold)',
+  'var(--sage)',
+  'var(--yellow)',
+];
+---
+<Base>
+  <Hero />
+  <HabitNav />
+  <Intermission />
+
+  <main id="habits">
+    <div class="video-wrap container" id="video">
+      <VideoPlayer />
+      <p class="video-caption">
+        This is the original video — press play anywhere to watch it in context.
+        Every “watch this part” link below jumps this player to that moment.
+      </p>
+    </div>
+
+    {HABITS.map((h, i) => <HabitSection habit={h} accent={ACCENTS[i]} />)}
+  </main>
+
+  <Outro />
+  <CreditFooter />
+</Base>
+
+<style>
+  .video-wrap {
+    padding-top: clamp(3rem, 8vh, 5rem);
+    padding-bottom: clamp(2rem, 5vh, 3rem);
+    scroll-margin-top: 5rem;
+  }
+  .video-caption {
+    margin-top: 1rem;
+    color: var(--ink-dim);
+    font-size: 0.88rem;
+    text-align: center;
+    max-width: 42ch;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  main {
+    display: block;
+  }
+  main > * + * {}
+</style>

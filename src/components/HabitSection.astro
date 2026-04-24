@@ -1,0 +1,346 @@
+---
+import type { Habit } from '../data/habits';
+import { VIDEO } from '../data/habits';
+
+export interface Props {
+  habit: Habit;
+  accent?: string;
+}
+
+const { habit, accent = 'var(--yellow)' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const fmt = (t: number) => {
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60);
+  return `${m}:${String(s).padStart(2, '0')}`;
+};
+
+const watchUrl = `${VIDEO.url}&t=${habit.start}s`;
+---
+<section class="habit" id={habit.slug} data-accent-var={accent} style={`--accent: ${accent};`}>
+  <div class="habit-head container">
+    <div class="head-left">
+      <div class="number">
+        <span class="n-label">Habit</span>
+        <span class="n-num">{String(habit.n).padStart(2, '0')}</span>
+      </div>
+      <h2 class="name">
+        <span class="romaji" aria-hidden="true">{habit.romaji}</span>
+        <span class="latin">{habit.name}</span>
+      </h2>
+      <p class="translation">{habit.translation}</p>
+    </div>
+    <div class="head-right">
+      <a class="watch" data-seek={habit.start} href={watchUrl} target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        Watch this part
+        <span class="watch-time">{fmt(habit.start)}</span>
+      </a>
+      <span class="source-hint">in the original video</span>
+    </div>
+  </div>
+
+  <figure class="gallery">
+    {habit.frames.map((frame, i) => (
+      <a
+        class="gallery-item"
+        href={`${VIDEO.url}&t=${habit.start + i * 30}s`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open the original video at ${habit.name}, frame ${i+1}, on YouTube`}
+      >
+        <img src={`${base}frames/${frame}.jpg`} alt={`${habit.name} \u2014 frame from the original video by ${VIDEO.channel}`} loading="lazy" />
+        <span class="gallery-chip">
+          <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42L17.59 5H14V3zM5 5h5v2H7v10h10v-3h2v5H5V5z" fill="currentColor"/></svg>
+          YouTube
+        </span>
+      </a>
+    ))}
+  </figure>
+
+  <div class="habit-body container">
+    <blockquote class="pullquote">
+      <span class="quote-mark" aria-hidden="true">“</span>
+      <span class="quote-text">{habit.quote}</span>
+    </blockquote>
+
+    <div class="body-grid">
+      <div class="prose">
+        {habit.body.map((p) => <p>{p}</p>)}
+      </div>
+      <aside class="tryit">
+        <span class="tryit-label">Try it</span>
+        <p>{habit.try}</p>
+        <a class="tryit-watch" data-seek={habit.start} href={watchUrl} target="_blank" rel="noopener noreferrer">
+          Hear it from the source →
+        </a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .habit {
+    padding: clamp(4rem, 10vh, 8rem) 0 clamp(3rem, 8vh, 6rem);
+    position: relative;
+    border-top: 1px solid var(--line-soft);
+  }
+  .habit:first-of-type { border-top: none; }
+
+  .habit-head {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: end;
+    padding-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  @media (min-width: 820px) {
+    .habit-head { grid-template-columns: 1fr auto; gap: 2rem; }
+  }
+
+  .head-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .number {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: 'Fraunces', serif;
+    letter-spacing: 0.12em;
+  }
+  .n-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ink-dim);
+  }
+  .n-num {
+    font-size: 1rem;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6em;
+    line-height: 1;
+    margin-top: 0.25rem;
+  }
+  .romaji {
+    font-family: 'Shippori Mincho', serif;
+    color: var(--accent);
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    font-weight: 500;
+    line-height: 1;
+    opacity: 0.9;
+  }
+  .latin {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    letter-spacing: -0.025em;
+  }
+
+  .translation {
+    color: var(--ink-mute);
+    font-size: 1rem;
+    margin: 0;
+    font-style: italic;
+  }
+
+  .head-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+  @media (min-width: 820px) {
+    .head-right { align-items: flex-end; text-align: right; }
+  }
+
+  .watch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 14%, transparent);
+    border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+    color: var(--ink);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .watch:hover {
+    background: color-mix(in oklab, var(--accent) 24%, transparent);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+  .watch-time {
+    font-family: 'Fraunces', serif;
+    font-feature-settings: 'tnum' 1;
+    font-size: 0.78rem;
+    color: var(--ink-mute);
+    padding-left: 0.55rem;
+    border-left: 1px solid var(--line);
+    margin-left: 0.2rem;
+  }
+  .source-hint {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 0 0 clamp(2rem, 5vw, 3rem) 0;
+    padding: 0 var(--gutter);
+    max-width: 100%;
+  }
+  @media (min-width: 720px) {
+    .gallery {
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1rem;
+      max-width: var(--max);
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+      grid-template-areas: "a b c";
+    }
+    .gallery-item:nth-child(1) { grid-area: a; }
+    .gallery-item:nth-child(2) { grid-area: b; }
+    .gallery-item:nth-child(3) { grid-area: c; }
+  }
+
+  .gallery-item {
+    position: relative;
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    box-shadow: 0 18px 40px -24px rgba(0,0,0,0.7), inset 0 0 0 1px var(--line);
+    transform: translateZ(0);
+  }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 3s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.04); }
+
+  .gallery-item.inview img {
+    animation: slowPan 14s ease-in-out infinite alternate;
+  }
+  @keyframes slowPan {
+    from { transform: scale(1.04) translate(-0.5%, 0); }
+    to   { transform: scale(1.1)  translate(0.8%, -1%); }
+  }
+
+  .gallery-chip {
+    position: absolute;
+    bottom: 0.65rem;
+    right: 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .gallery-item:hover .gallery-chip { opacity: 1; }
+
+  .habit-body { margin-top: 0; }
+
+  .pullquote {
+    margin: 0 0 clamp(1.5rem, 4vw, 2.5rem) 0;
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    line-height: 1.3;
+    color: var(--ink);
+    max-width: 28ch;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .quote-mark {
+    position: absolute;
+    left: -0.15rem;
+    top: -0.5rem;
+    font-size: 3.2rem;
+    line-height: 1;
+    color: var(--accent);
+    font-family: 'Shippori Mincho', serif;
+    opacity: 0.8;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .body-grid { grid-template-columns: 1.6fr 1fr; gap: 3rem; }
+  }
+
+  .prose {
+    color: var(--ink-mute);
+    font-size: 1.02rem;
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+  .prose p { margin-bottom: 1rem; }
+
+  .tryit {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--bg-soft);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.4rem;
+    font-size: 0.98rem;
+    color: var(--ink);
+  }
+  .tryit-label {
+    display: inline-block;
+    font-family: 'Fraunces', serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .tryit p { margin: 0 0 0.9rem 0; line-height: 1.55; }
+  .tryit-watch {
+    font-size: 0.82rem;
+    color: var(--ink-mute);
+    font-weight: 500;
+  }
+  .tryit-watch:hover { color: var(--accent); }
+</style>
+
+<script>
+  // Ken-burns only when visible, saves GPU on long pages
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      e.target.classList.toggle('inview', e.isIntersecting);
+    }
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.gallery-item').forEach((el) => io.observe(el));
+</script>

@@ -1,0 +1,108 @@
+---
+import { OUTRO, HABITS, VIDEO } from '../data/habits';
+---
+<section class="outro" id="outro">
+  <div class="outro-inner container">
+    <p class="outro-eyebrow">Eight tiny habits, one lifetime</p>
+    <h2 class="outro-title">{OUTRO.recap}</h2>
+    <ol class="recap-list">
+      {OUTRO.lines.map((line, i) => (
+        <li>
+          <a href={`#${HABITS[i].slug}`}>
+            <span class="ri-num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="ri-text">{line}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <p class="outro-closing">{OUTRO.closing}</p>
+    <a class="outro-watch" data-seek={OUTRO.time} href={`${VIDEO.url}&t=${OUTRO.time}s`} target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+      Watch the closing
+      <span class="t">{Math.floor(OUTRO.time / 60)}:{String(Math.floor(OUTRO.time % 60)).padStart(2, '0')}</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .outro {
+    padding: clamp(4rem, 10vh, 8rem) 0 clamp(3rem, 8vh, 6rem);
+    border-top: 1px solid var(--line-soft);
+  }
+  .outro-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 50rem;
+  }
+  .outro-eyebrow {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+    margin: 0;
+  }
+  .outro-title {
+    font-size: clamp(1.6rem, 3.6vw, 2.5rem);
+    max-width: 26ch;
+    margin: 0;
+  }
+  .recap-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 1rem 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .recap-list a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    padding: 0.5rem 0;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 1rem;
+  }
+  .recap-list a:hover { text-decoration: none; background: var(--bg-soft); }
+  .ri-num {
+    font-family: 'Fraunces', serif;
+    font-size: 0.85rem;
+    color: var(--yellow-hi);
+    flex-shrink: 0;
+    font-feature-settings: 'tnum' 1;
+  }
+  .ri-text { color: var(--ink-mute); }
+  .recap-list a:hover .ri-text { color: var(--ink); }
+
+  .outro-closing {
+    color: var(--ink-mute);
+    font-size: 1.02rem;
+    line-height: 1.7;
+    margin: 1rem 0 0 0;
+    max-width: 55ch;
+  }
+
+  .outro-watch {
+    margin-top: 1rem;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: rgba(243,192,66,0.12);
+    border: 1px solid rgba(243,192,66,0.3);
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .outro-watch:hover { text-decoration: none; background: rgba(243,192,66,0.22); }
+  .outro-watch .t {
+    font-family: 'Fraunces', serif;
+    font-size: 0.82rem;
+    color: var(--ink-mute);
+    padding-left: 0.55rem;
+    border-left: 1px solid var(--line);
+    margin-left: 0.2rem;
+  }
+</style>

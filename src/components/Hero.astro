@@ -1,0 +1,225 @@
+---
+import { INTRO, VIDEO } from '../data/habits';
+const base = import.meta.env.BASE_URL;
+---
+<header class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <img src={`${base}frames/${INTRO.frames[0]}.jpg`} alt="" loading="eager" fetchpriority="high" />
+    <div class="hero-grain"></div>
+    <div class="hero-vignette"></div>
+  </div>
+
+  <div class="hero-inner container">
+    <div class="hero-tag">
+      <span class="kanji">日</span>
+      <span class="tag-text">from&nbsp;japan</span>
+    </div>
+
+    <h1 class="hero-title">
+      Eight tiny habits.<br/>
+      <em>Massive</em> difference.
+    </h1>
+
+    <p class="hero-lede">
+      {INTRO.hook}
+      <br/><br/>
+      <strong>{INTRO.answer}</strong>
+    </p>
+
+    <div class="hero-meta">
+      <a class="hero-cta" href="#video" data-seek="0">
+        <span class="dot"></span>
+        Watch the original video
+      </a>
+      <div class="hero-credit">
+        <span class="credit-label">Original video by</span>
+        <a href={VIDEO.channelUrl} target="_blank" rel="noopener noreferrer">{VIDEO.channel}</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    min-height: 100vh;
+    display: grid;
+    align-items: end;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: -8% -4% -8% -4%;
+    z-index: -2;
+  }
+  .hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    transform: scale(1.08);
+    filter: saturate(0.95) contrast(0.98);
+    animation: heroKen 24s ease-in-out infinite alternate;
+  }
+  @keyframes heroKen {
+    from { transform: scale(1.06) translateY(-1%); }
+    to   { transform: scale(1.14) translateY(1.5%); }
+  }
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1200px 600px at 20% 0%, rgba(243,192,66,0.15), transparent 60%),
+      radial-gradient(900px 600px at 100% 100%, rgba(155,199,215,0.12), transparent 60%);
+    mix-blend-mode: screen;
+  }
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(27,23,20,0.2) 0%, rgba(27,23,20,0.55) 55%, rgba(27,23,20,0.95) 100%);
+  }
+  @media (prefers-color-scheme: light) {
+    .hero-vignette {
+      background: linear-gradient(180deg, rgba(246,239,228,0) 0%, rgba(246,239,228,0.55) 60%, rgba(246,239,228,0.98) 100%);
+    }
+    .hero-grain { mix-blend-mode: multiply; }
+  }
+
+  .hero-inner {
+    padding-top: clamp(4rem, 12vh, 9rem);
+    padding-bottom: clamp(3rem, 8vh, 6rem);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(27,23,20,0.55);
+    backdrop-filter: blur(8px);
+    width: max-content;
+    font-family: 'Fraunces', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+  }
+  .kanji {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.15rem;
+    color: var(--yellow-hi);
+    line-height: 1;
+  }
+  .tag-text { color: var(--ink); font-weight: 600; }
+
+  .hero-title {
+    max-width: 15ch;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--yellow-hi);
+    font-variation-settings: 'opsz' 144;
+  }
+
+  .hero-lede {
+    max-width: 56ch;
+    color: var(--ink-mute);
+    font-size: clamp(1rem, 1.9vw, 1.2rem);
+    line-height: 1.6;
+  }
+  .hero-lede strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+    margin-top: 0.5rem;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1.2rem;
+    border-radius: 999px;
+    background: var(--yellow);
+    color: #1b1714;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 18px 40px -18px rgba(243,192,66,0.6);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hero-cta:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+    box-shadow: 0 22px 48px -18px rgba(243,192,66,0.75);
+  }
+  .hero-cta .dot {
+    width: 10px; height: 10px;
+    border-radius: 999px;
+    background: #1b1714;
+    box-shadow: 0 0 0 4px rgba(27,23,20,0.15);
+  }
+
+  .hero-credit {
+    font-size: 0.9rem;
+    color: var(--ink-mute);
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .credit-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+  }
+  .hero-credit a { color: var(--ink); font-weight: 600; }
+
+  .hero-scroll {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 1.5rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(180deg, transparent, var(--ink-dim));
+    animation: scrollBob 2.4s ease-in-out infinite;
+  }
+  @keyframes scrollBob {
+    0%, 100% { transform: scaleY(1); transform-origin: top; }
+    50%      { transform: scaleY(0.5); transform-origin: top; }
+  }
+  @media (min-width: 900px) {
+    .hero-scroll { display: flex; }
+  }
+</style>

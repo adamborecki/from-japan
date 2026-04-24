@@ -1,0 +1,170 @@
+---
+import { VIDEO } from '../data/habits';
+---
+<div class="player" id="player-root" data-video-id={VIDEO.id}>
+  <div class="player-frame">
+    <div id="yt-player" aria-label={`Embedded YouTube player: ${VIDEO.title}`}></div>
+    <button class="player-overlay" id="player-overlay" type="button" aria-label="Play the original video">
+      <div class="play-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+      </div>
+      <div class="overlay-label">
+        <span class="eyebrow">The original video</span>
+        <span class="title">{VIDEO.title}</span>
+        <span class="byline">by <a href={VIDEO.channelUrl} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">{VIDEO.channel}</a> • 16 min</span>
+      </div>
+    </button>
+  </div>
+</div>
+
+<script>
+  const overlay = document.getElementById('player-overlay');
+  const playerRoot = document.getElementById('player-root');
+  const VIDEO_ID = playerRoot?.dataset.videoId;
+  let yt: any = null;
+  let ready = false;
+  const queued: number[] = [];
+
+  function loadApi() {
+    if ((window as any).YT?.Player) return Promise.resolve((window as any).YT);
+    return new Promise((resolve) => {
+      (window as any).onYouTubeIframeAPIReady = () => resolve((window as any).YT);
+      const s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensurePlayer(): Promise<any> {
+    if (yt) return yt;
+    const YT: any = await loadApi();
+    return new Promise((resolve) => {
+      yt = new YT.Player('yt-player', {
+        videoId: VIDEO_ID,
+        playerVars: {
+          playsinline: 1,
+          rel: 0,
+          modestbranding: 1,
+          origin: location.origin,
+        },
+        events: {
+          onReady: () => {
+            ready = true;
+            overlay?.setAttribute('data-loaded', 'true');
+            while (queued.length) {
+              const t = queued.shift();
+              if (typeof t === 'number') {
+                yt.seekTo(t, true);
+                yt.playVideo();
+              }
+            }
+            resolve(yt);
+          },
+        },
+      });
+    });
+  }
+
+  async function playFrom(t: number) {
+    await ensurePlayer();
+    if (!ready) { queued.push(t); return; }
+    yt.seekTo(t, true);
+    yt.playVideo();
+  }
+
+  overlay?.addEventListener('click', async () => {
+    await ensurePlayer();
+    if (ready) yt.playVideo();
+  });
+
+  document.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement)?.closest('[data-seek]') as HTMLElement | null;
+    if (!el) return;
+    e.preventDefault();
+    const t = parseInt(el.dataset.seek || '0', 10);
+    const host = document.getElementById('player-root');
+    host?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    playFrom(t);
+  });
+</script>
+
+<style>
+  .player {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 30px 80px -40px rgba(0,0,0,0.8), 0 8px 24px -16px rgba(0,0,0,0.6);
+    border: 1px solid var(--line);
+  }
+  .player-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+  }
+  #yt-player, .player-frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .player-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%);
+    border: none;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    text-align: left;
+    padding: clamp(1rem, 4vw, 2rem);
+    transition: opacity 0.3s ease;
+  }
+  .player-overlay[data-loaded='true'] { opacity: 0; pointer-events: none; }
+  .play-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    background: var(--yellow);
+    color: #1b1714;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 10px 30px -10px rgba(243,192,66,0.6);
+    transition: transform 0.2s ease;
+    margin-bottom: auto;
+    align-self: center;
+    margin-top: auto;
+  }
+  .player-overlay:hover .play-icon { transform: scale(1.06); }
+  .overlay-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: #fff;
+  }
+  .eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--yellow-hi);
+  }
+  .title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    line-height: 1.2;
+    max-width: 34ch;
+  }
+  .byline {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.75);
+  }
+  .byline :global(a) { color: #fff; text-decoration: underline; }
+
+  @media (min-width: 720px) {
+    .player-overlay { padding: 2rem 2.25rem; }
+  }
+</style>
