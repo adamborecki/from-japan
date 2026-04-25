@@ -1,0 +1,206 @@
+---
+import { CONCEPTS_V2 } from '../../data/conceptsV2';
+
+// Hand-tuned X/Y offsets per card so the corridor isn't a straight line.
+// `rot` = initial Y-axis tilt so each card faces the camera at a slight angle.
+const positions = [
+  { x: -260, y: -120, rot:  -7 },
+  { x:  240, y:  150, rot:  10 },
+  { x: -180, y:   80, rot:  -4 },
+  { x:  220, y: -160, rot:   8 },
+  { x:    0, y: -200, rot:  -2 },
+  { x: -260, y:   30, rot:   6 },
+  { x:  180, y:  210, rot: -10 },
+  { x:  -90, y:  -40, rot:   3 },
+];
+
+const SPACING = 720; // distance between cards along the Z corridor
+---
+<div class="scene" data-scene>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <div class="stage" data-stage>
+    {CONCEPTS_V2.map((c, i) => {
+      const pos = positions[i % positions.length];
+      const baseZ = -i * SPACING;
+      const waveDur = 7 + (i % 5);   // 7-11s
+      const waveDelay = i * 0.7;     // staggered
+      return (
+        <div
+          class="card"
+          data-card
+          data-base-z={baseZ}
+          style={`
+            --x: ${pos.x}px;
+            --y: ${pos.y}px;
+            --rot: ${pos.rot}deg;
+            --accent: ${c.accent};
+            --wave-dur: ${waveDur}s;
+            --wave-delay: -${waveDelay}s;
+          `}
+        >
+          <div class="wave">
+            <span class="kanji" aria-hidden="true">{c.romaji}</span>
+            <h2 class="name">{c.name}</h2>
+            <p class="translation">{c.translation}</p>
+            <p class="tagline">{c.tagline}</p>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <div class="hint" data-hint>
+    <span>screensaver — tap, scroll, or swipe</span>
+  </div>
+</div>
+
+<style>
+  .scene {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    perspective: 1400px;
+    perspective-origin: 50% 50%;
+    background: var(--bg);
+    isolation: isolate;
+    cursor: grab;
+    touch-action: none;
+  }
+  .scene:active { cursor: grabbing; }
+
+  .ambient {
+    position: absolute;
+    inset: -10%;
+    background:
+      radial-gradient(40% 30% at 30% 20%,
+        color-mix(in oklab, var(--yellow-hi) 9%, transparent) 0%,
+        transparent 70%),
+      radial-gradient(36% 28% at 75% 80%,
+        color-mix(in oklab, var(--rose) 7%, transparent) 0%,
+        transparent 70%),
+      radial-gradient(30% 26% at 80% 30%,
+        color-mix(in oklab, var(--sky) 6%, transparent) 0%,
+        transparent 70%);
+    animation: drift 28s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translate3d(-2%,  1%, 0) scale(1); }
+    to   { transform: translate3d( 2%, -1%, 0) scale(1.05); }
+  }
+
+  .stage {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    /* JS sets --z and --fade per frame */
+    transform:
+      translate(-50%, -50%)
+      translate3d(var(--x), var(--y), var(--z, 0px))
+      rotateY(var(--rot));
+    opacity: var(--fade, 0);
+    transition: opacity 0.25s linear;
+    width: max-content;
+    text-align: center;
+  }
+
+  .wave {
+    transform-style: preserve-3d;
+    animation: wave var(--wave-dur, 8s) var(--wave-delay, 0s) ease-in-out infinite;
+    will-change: transform;
+  }
+  @keyframes wave {
+    0%, 100% {
+      transform: translate3d(0, 0, 0) rotateX(0) rotateY(0) rotateZ(0);
+    }
+    33% {
+      transform: translate3d(8px, -10px, 14px) rotateX(2deg) rotateY(-3deg) rotateZ(0.6deg);
+    }
+    66% {
+      transform: translate3d(-6px, 6px, -8px) rotateX(-1.5deg) rotateY(2.5deg) rotateZ(-0.5deg);
+    }
+  }
+
+  .kanji {
+    display: block;
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: clamp(7rem, 12vw, 11rem);
+    line-height: 0.85;
+    opacity: 0.78;
+    letter-spacing: -0.04em;
+    text-shadow:
+      0 0 32px color-mix(in oklab, var(--accent) 35%, transparent),
+      0 0 72px color-mix(in oklab, var(--accent) 18%, transparent);
+    user-select: none;
+  }
+  .name {
+    margin: 0.4rem 0 0;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .translation {
+    margin: 0.15rem 0 0;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.85rem, 1.2vw, 1rem);
+    color: var(--ink-mute);
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+  }
+  .tagline {
+    margin: 0.6rem 0 0;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    color: var(--accent);
+    max-width: 28ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hint {
+    position: fixed;
+    bottom: clamp(1rem, 3vh, 2rem);
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .hint span {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--bg-soft) 50%, transparent);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+  .hint.is-hidden span { opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient { animation: none; }
+    .wave    { animation: none; }
+  }
+</style>

@@ -4,7 +4,7 @@ const base = import.meta.env.BASE_URL;
 ---
 <Base
   title="from-japan — pick a version"
-  description="Eight tiny Japanese habits, two ways to explore them."
+  description="Eight tiny Japanese habits, three ways to explore them."
 >
   <main class="chooser">
     <div class="bg" aria-hidden="true">
@@ -15,7 +15,7 @@ const base = import.meta.env.BASE_URL;
     <div class="container chooser-inner">
       <header class="head">
         <p class="eyebrow">from japan</p>
-        <h1>Eight tiny habits. <span class="muted">Two ways in.</span></h1>
+        <h1>Eight tiny habits. <span class="muted">Three ways in.</span></h1>
         <p class="sub">Pick the one that fits your mood right now.</p>
       </header>
 
@@ -35,10 +35,18 @@ const base = import.meta.env.BASE_URL;
           <span class="card-meta">parallax · evidence · sleek</span>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
+
+        <a class="card card-v3" href={`${base}v3`}>
+          <div class="card-num">v3</div>
+          <h2>The screensaver</h2>
+          <p>Eight kanji floating in 3D, gently waving, looping forever. Touch nothing and watch — or swipe through it.</p>
+          <span class="card-meta">3d · ambient · loop</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
       </div>
 
       <p class="footnote">
-        Both versions credit the source video by
+        All three credit the source video by
         <a href="https://www.youtube.com/@WutNexLev" target="_blank" rel="noopener noreferrer">@WutNexLev</a>.
       </p>
     </div>
@@ -118,8 +126,13 @@ const base = import.meta.env.BASE_URL;
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
-  @media (min-width: 760px) {
+  @media (min-width: 720px) {
     .cards { grid-template-columns: 1fr 1fr; }
+    .card-v3 { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1040px) {
+    .cards { grid-template-columns: repeat(3, 1fr); }
+    .card-v3 { grid-column: auto; }
   }
 
   .card {
@@ -147,6 +160,7 @@ const base = import.meta.env.BASE_URL;
 
   .card-v1 { --accent: var(--wood); }
   .card-v2 { --accent: var(--yellow-hi); }
+  .card-v3 { --accent: var(--sky); }
 
   .card-num {
     font-family: 'Fraunces', serif;

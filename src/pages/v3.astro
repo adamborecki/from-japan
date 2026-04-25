@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import Scene from '../components/v3/Scene.astro';
+const base = import.meta.env.BASE_URL;
+---
+<Base
+  title="from-japan v3 — screensaver"
+  description="A 3D screensaver of eight Japanese ideas, gently waving and looping forever."
+>
+  <a class="exit" href={base} aria-label="Back to chooser">
+    <span class="exit-arrow" aria-hidden="true">←</span>
+    <span class="exit-label">all versions</span>
+  </a>
+
+  <Scene />
+
+  <script>
+    import '../components/v3/scene.client.ts';
+  </script>
+</Base>
+
+<style>
+  :global(body) {
+    overflow: hidden;
+  }
+  .exit {
+    position: fixed;
+    top: clamp(1rem, 3vh, 1.75rem);
+    left: clamp(1rem, 3vw, 1.75rem);
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--bg-soft) 50%, transparent);
+    color: var(--ink-mute);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: lowercase;
+    text-decoration: none;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: color 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  .exit:hover {
+    color: var(--ink);
+    border-color: var(--ink-mute);
+    text-decoration: none;
+    transform: translateX(-2px);
+  }
+  .exit-arrow { color: var(--yellow-hi); }
+</style>
