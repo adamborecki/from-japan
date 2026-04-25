@@ -1,0 +1,174 @@
+---
+import { V2_INTRO } from '../../data/conceptsV2';
+---
+<section class="v2-hero" data-hero>
+  <div class="hero-bg" aria-hidden="true">
+    <span class="hero-kanji">日</span>
+  </div>
+
+  <div class="hero-fore container">
+    <p class="eyebrow" data-h="eyebrow">{V2_INTRO.eyebrow}</p>
+    <h1 class="hero-title" data-h="title">
+      <span class="word">{V2_INTRO.title.split(' ').slice(0, -1).join(' ')}</span>
+      <span class="word accentword">{V2_INTRO.title.split(' ').slice(-1)[0]}</span>
+    </h1>
+    <p class="blurb" data-h="blurb">{V2_INTRO.blurb}</p>
+    <p class="honesty" data-h="honesty">
+      <span class="honesty-mark" aria-hidden="true">※</span>
+      {V2_INTRO.honesty}
+    </p>
+    <a class="hero-cta" href="#kaizen" data-h="cta">
+      <span>begin</span>
+      <span class="cta-arrow" aria-hidden="true">↓</span>
+    </a>
+  </div>
+</section>
+
+<script>
+  import { animate, createTimeline } from 'animejs';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
+    const tl = createTimeline({
+      defaults: { ease: 'out(3)', duration: 900 },
+    });
+
+    tl.add('[data-h="eyebrow"]', { opacity: [0, 1], translateY: [12, 0] })
+      .add('[data-h="title"] .word', {
+          opacity: [0, 1],
+          translateY: [40, 0],
+          delay: (_el: Element, i: number) => i * 120,
+        }, '-=600')
+      .add('[data-h="blurb"]',   { opacity: [0, 1], translateY: [12, 0] }, '-=500')
+      .add('[data-h="honesty"]', { opacity: [0, 0.7], translateY: [12, 0] }, '-=700')
+      .add('[data-h="cta"]',     { opacity: [0, 1], translateY: [10, 0] }, '-=500');
+
+    animate('.hero-kanji', {
+      opacity: [0, 0.07],
+      scale: [1.15, 1],
+      duration: 2400,
+      ease: 'out(2)',
+    });
+  } else {
+    document.querySelectorAll<HTMLElement>('[data-h]').forEach((el) => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
+</script>
+
+<style>
+  .v2-hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    isolation: isolate;
+    padding: clamp(4rem, 12vh, 8rem) 0 clamp(3rem, 6vh, 5rem);
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  .hero-kanji {
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: clamp(28rem, 80vw, 60rem);
+    line-height: 0.85;
+    opacity: 0;
+  }
+  .hero-fore {
+    position: relative;
+    display: grid;
+    gap: clamp(1rem, 2vh, 1.6rem);
+    max-width: 60rem;
+  }
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink-mute);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin: 0;
+    opacity: 0;
+  }
+  .hero-title {
+    font-size: clamp(3rem, 9vw, 7rem);
+    line-height: 0.95;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.4em;
+  }
+  .word { display: inline-block; opacity: 0; }
+  .accentword {
+    color: var(--yellow-hi);
+    font-style: italic;
+  }
+  .blurb {
+    margin: 0;
+    color: var(--ink-mute);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    max-width: 38ch;
+    line-height: 1.55;
+    opacity: 0;
+  }
+  .honesty {
+    margin: 0.5rem 0 0 0;
+    padding: 0.75rem 1rem 0.75rem 0.85rem;
+    border-left: 2px solid color-mix(in oklab, var(--ink-dim) 80%, transparent);
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 50ch;
+    opacity: 0;
+    font-style: italic;
+  }
+  .honesty-mark {
+    color: var(--yellow);
+    margin-right: 0.4rem;
+    font-style: normal;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg-soft);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    text-decoration: none;
+    width: fit-content;
+    opacity: 0;
+    transition: border-color 0.25s, transform 0.25s, background 0.25s;
+  }
+  .hero-cta:hover {
+    border-color: var(--yellow-hi);
+    transform: translateY(-1px);
+    background: color-mix(in oklab, var(--yellow-hi) 8%, var(--bg-soft));
+    text-decoration: none;
+  }
+  .cta-arrow {
+    font-size: 1.05rem;
+    color: var(--yellow-hi);
+    transition: transform 0.25s;
+  }
+  .hero-cta:hover .cta-arrow { transform: translateY(2px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-kanji { opacity: 0.07; }
+  }
+</style>

@@ -1,65 +1,194 @@
 ---
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
-import HabitNav from '../components/HabitNav.astro';
-import Intermission from '../components/Intermission.astro';
-import HabitSection from '../components/HabitSection.astro';
-import VideoPlayer from '../components/VideoPlayer.astro';
-import Outro from '../components/Outro.astro';
-import CreditFooter from '../components/CreditFooter.astro';
-import { HABITS } from '../data/habits';
-
-const ACCENTS = [
-  'var(--yellow)',
-  'var(--wood)',
-  'var(--sage)',
-  'var(--sky)',
-  'var(--rose)',
-  'var(--gold)',
-  'var(--sage)',
-  'var(--yellow)',
-];
+const base = import.meta.env.BASE_URL;
 ---
-<Base>
-  <Hero />
-  <HabitNav />
-  <Intermission />
-
-  <main id="habits">
-    <div class="video-wrap container" id="video">
-      <VideoPlayer />
-      <p class="video-caption">
-        This is the original video — press play anywhere to watch it in context.
-        Every “watch this part” link below jumps this player to that moment.
-      </p>
+<Base
+  title="from-japan — pick a version"
+  description="Eight tiny Japanese habits, two ways to explore them."
+>
+  <main class="chooser">
+    <div class="bg" aria-hidden="true">
+      <span class="kanji-a">日</span>
+      <span class="kanji-b">本</span>
     </div>
 
-    {HABITS.map((h, i) => <HabitSection habit={h} accent={ACCENTS[i]} />)}
-  </main>
+    <div class="container chooser-inner">
+      <header class="head">
+        <p class="eyebrow">from japan</p>
+        <h1>Eight tiny habits. <span class="muted">Two ways in.</span></h1>
+        <p class="sub">Pick the one that fits your mood right now.</p>
+      </header>
 
-  <Outro />
-  <CreditFooter />
+      <div class="cards">
+        <a class="card card-v1" href={`${base}v1`}>
+          <div class="card-num">v1</div>
+          <h2>The video, unfolded</h2>
+          <p>The original YouTube video opened up into chapters, frames, and quotes you can dip into at your own pace.</p>
+          <span class="card-meta">read · watch · scroll</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="card card-v2" href={`${base}v2`}>
+          <div class="card-num">v2</div>
+          <h2>The deck, with science</h2>
+          <p>Just the eight ideas — paired with real, cited research. Slide by slide. Scroll at your own pace.</p>
+          <span class="card-meta">parallax · evidence · sleek</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <p class="footnote">
+        Both versions credit the source video by
+        <a href="https://www.youtube.com/@WutNexLev" target="_blank" rel="noopener noreferrer">@WutNexLev</a>.
+      </p>
+    </div>
+  </main>
 </Base>
 
 <style>
-  .video-wrap {
-    padding-top: clamp(3rem, 8vh, 5rem);
-    padding-bottom: clamp(2rem, 5vh, 3rem);
-    scroll-margin-top: 5rem;
+  .chooser {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    isolation: isolate;
+    padding: clamp(3rem, 8vh, 6rem) 0;
   }
-  .video-caption {
-    margin-top: 1rem;
-    color: var(--ink-dim);
-    font-size: 0.88rem;
-    text-align: center;
-    max-width: 42ch;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.5;
+  .bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .bg span {
+    position: absolute;
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 0.85;
+    user-select: none;
+  }
+  .kanji-a {
+    top: -10%;
+    left: -8%;
+    font-size: clamp(20rem, 50vw, 38rem);
+    opacity: 0.05;
+  }
+  .kanji-b {
+    bottom: -18%;
+    right: -10%;
+    font-size: clamp(22rem, 55vw, 42rem);
+    opacity: 0.04;
+    color: var(--yellow-hi);
   }
 
-  main {
-    display: block;
+  .chooser-inner {
+    position: relative;
+    display: grid;
+    gap: clamp(2rem, 4vh, 3rem);
+    max-width: 64rem;
   }
-  main > * + * {}
+  .head { display: grid; gap: 0.6rem; }
+  .eyebrow {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink-mute);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    max-width: 18ch;
+  }
+  .muted {
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+  .sub {
+    margin: 0;
+    color: var(--ink-mute);
+    font-size: 1.05rem;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 760px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+  }
+
+  .card {
+    position: relative;
+    display: grid;
+    gap: 0.7rem;
+    padding: clamp(1.5rem, 3vw, 2.2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--bg-soft) 92%, transparent);
+    color: var(--ink);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    background: color-mix(in oklab, var(--accent) 6%, var(--bg-soft));
+    text-decoration: none;
+  }
+  .card:hover .card-arrow { transform: translateX(4px); }
+
+  .card-v1 { --accent: var(--wood); }
+  .card-v2 { --accent: var(--yellow-hi); }
+
+  .card-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .card h2 {
+    font-size: clamp(1.4rem, 2.8vw, 2rem);
+    line-height: 1.1;
+    margin: 0;
+  }
+  .card p {
+    color: var(--ink-mute);
+    font-size: 0.98rem;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 36ch;
+  }
+  .card-meta {
+    margin-top: 0.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .card-arrow {
+    position: absolute;
+    top: clamp(1.5rem, 3vw, 2.2rem);
+    right: clamp(1.5rem, 3vw, 2.2rem);
+    color: var(--accent);
+    font-size: 1.5rem;
+    transition: transform 0.3s;
+  }
+
+  .footnote {
+    margin: 0;
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+  }
+  .footnote a { color: var(--ink-mute); }
 </style>

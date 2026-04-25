@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import V2Hero from '../components/v2/V2Hero.astro';
+import V2Nav from '../components/v2/V2Nav.astro';
+import Slide from '../components/v2/Slide.astro';
+import V2Outro from '../components/v2/V2Outro.astro';
+import CreditFooter from '../components/CreditFooter.astro';
+import { CONCEPTS_V2 } from '../data/conceptsV2';
+---
+<Base
+  title="from-japan v2 — eight ideas, scroll at your own pace"
+  description="An educational scroll-deck of eight Japanese well-being concepts, each paired with real, cited research."
+>
+  <V2Hero />
+  <V2Nav />
+
+  <main class="v2-main">
+    {CONCEPTS_V2.map((c) => <Slide concept={c} />)}
+  </main>
+
+  <V2Outro />
+  <CreditFooter />
+
+  <script>
+    import '../components/v2/scroll.client.ts';
+  </script>
+</Base>
+
+<style>
+  .v2-main {
+    display: block;
+  }
+</style>
